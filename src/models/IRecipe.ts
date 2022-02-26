@@ -10,4 +10,5 @@ export interface IRecipe {
   category: ICategory;
   createdAt: Date;
   updatedAt: Date;
+  photo: string;
 }

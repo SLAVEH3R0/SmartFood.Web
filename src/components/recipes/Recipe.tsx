@@ -10,6 +10,7 @@ const Recipe: React.FC<IProps> = ({ recipe }: IProps) => {
   return (
     <div>
       <h2>{recipe.name}</h2>
+      <img src={recipe.photo} />
       <p>{recipe.description}</p>
       <p>{formatDistance(recipe.createdAt, new Date(), { addSuffix: true })}</p>
     </div>
