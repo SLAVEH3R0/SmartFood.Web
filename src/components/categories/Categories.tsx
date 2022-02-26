@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Category } from '../../models/Category';
+import { ICategory } from '../../models/ICategory';
 import api from '../../services/api';
 
 const Categories: React.FC = () => {
-  const [categories, setCategories] = useState<Array<Category>>([]);
+  const [categories, setCategories] = useState<Array<ICategory>>([]);
 
   useEffect(() => {
     getCategories();
@@ -20,7 +20,7 @@ const Categories: React.FC = () => {
     <div>
       <h1>CategoryList</h1>
 
-      {categories.map((category: Category) => (
+      {categories.map((category: ICategory) => (
         <div key={category.id}>
           <h2>{category.name}</h2>
           <p>{category.id}</p>

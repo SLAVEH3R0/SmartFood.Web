@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Recipe } from '../../models/Recipe';
+import { IRecipe } from '../../models/IRecipe';
 import api from '../../services/api';
+import Recipe from '././Recipe';
 
 const Recipes: React.FC = () => {
-  const [recipes, setRecipes] = useState<Array<Recipe>>([]);
+  const [recipes, setRecipes] = useState<Array<IRecipe>>([]);
 
   useEffect(() => {
     getRecipes();
@@ -13,7 +14,7 @@ const Recipes: React.FC = () => {
     await api
       .get('/recipes')
       .then((response) => {
-        const data = response.data.map((recipes: Recipe) => ({
+        const data = response.data.map((recipes: IRecipe) => ({
           ...recipes,
           createdAt: new Date(recipes.createdAt),
           updatedAt: new Date(recipes.updatedAt),
@@ -27,11 +28,9 @@ const Recipes: React.FC = () => {
     <div>
       <h1>Recipes</h1>
 
-      {recipes.map((recipe: Recipe) => (
+      {recipes.map((recipe: IRecipe) => (
         <div key={recipe.id}>
-          <h2>{recipe.name}</h2>
-          <p>{recipe.description}</p>
-          <p>{recipe.createdAt.toLocaleString()}</p>
+          <Recipe recipe={recipe} />
         </div>
       ))}
     </div>
