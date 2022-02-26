@@ -1,3 +1,4 @@
+import { formatDistance } from 'date-fns';
 import React from 'react';
 import { IRecipe } from '../../models/IRecipe';
 
@@ -10,7 +11,7 @@ const Recipe: React.FC<IProps> = ({ recipe }: IProps) => {
     <div>
       <h2>{recipe.name}</h2>
       <p>{recipe.description}</p>
-      <p>{recipe.createdAt.toLocaleString()}</p>
+      <p>{formatDistance(recipe.createdAt, new Date(), { addSuffix: true })}</p>
     </div>
   );
 };
