@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Category } from '../../models/Category';
 import api from '../../services/api';
 
-const CategoryList: React.FC = () => {
+const Categories: React.FC = () => {
   const [categories, setCategories] = useState<Array<Category>>([]);
 
   useEffect(() => {
@@ -30,4 +30,4 @@ const CategoryList: React.FC = () => {
   );
 };
 
-export default CategoryList;
+export default Categories;
