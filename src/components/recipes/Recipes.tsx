@@ -3,9 +3,11 @@ import { Col, Row } from 'react-bootstrap';
 import { IRecipe } from '../../models/IRecipe';
 import api from '../../services/api';
 import Recipe from '././Recipe';
+import RecipeForm from '././RecipeForm';
 
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<Array<IRecipe>>([]);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     getRecipes();
@@ -28,6 +30,11 @@ const Recipes: React.FC = () => {
   return (
     <>
       <h1>Recipes</h1>
+
+      <div>
+        <button onClick={() => setShowForm(true)}>Add Recipe</button>
+      </div>
+
       <Row>
         {recipes.map((recipe: IRecipe) => (
           <Col xs={12} md={3} key={recipe.id}>
@@ -35,6 +42,8 @@ const Recipes: React.FC = () => {
           </Col>
         ))}
       </Row>
+
+      {showForm && <RecipeForm show={showForm} onClose={() => setShowForm(false)} />}
     </>
   );
 };
