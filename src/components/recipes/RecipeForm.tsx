@@ -15,8 +15,8 @@ interface IFormValues {
   name: string;
   preparationTime: number;
   servings: number;
-  ingredients: string;
   description: string;
+  ingredients: string;
   category: ICategory;
 }
 
@@ -32,7 +32,7 @@ const schema = yup.object({
     .min(1, 'Servings must be greater than 0')
     .max(100, 'Servings must be less than 100'),
   description: yup.string().required('Description is required'),
-  ingredients: yup.string().required('Ingredients are required'),
+  ingredients: yup.string().required('Ingredients is required'),
 });
 
 const RecipeForm: React.FC<IProps> = ({ show, onClose }: IProps) => {
@@ -45,7 +45,11 @@ const RecipeForm: React.FC<IProps> = ({ show, onClose }: IProps) => {
   } = useForm<IFormValues>({
     resolver: yupResolver(schema),
   });
-  const categoryId = useWatch({ control, name: 'category.id' });
+
+  const categoryId = useWatch({
+    control,
+    name: 'category.id',
+  });
 
   useEffect(() => {
     getCategories();
@@ -56,11 +60,11 @@ const RecipeForm: React.FC<IProps> = ({ show, onClose }: IProps) => {
       .get('/categories')
       .then((response) => {
         setCategories(response.data);
-        if (response.data.lenght > 0) {
+        if (response.data.length > 0) {
           setValue('category.id', response.data[0].id);
         }
       })
-      .catch((err) => console.error(err));
+      .catch((error) => console.error(error));
   };
 
   const onSubmit: SubmitHandler<IFormValues> = (data: IFormValues) => {
@@ -70,8 +74,9 @@ const RecipeForm: React.FC<IProps> = ({ show, onClose }: IProps) => {
         data.category.name = categoryName;
       }
     }
+
     console.log(data);
-    onClose();
+    //TODO: add post logic here...
   };
 
   return (
@@ -81,12 +86,12 @@ const RecipeForm: React.FC<IProps> = ({ show, onClose }: IProps) => {
           <Modal.Title>Add Recipe</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <Form.Control.Feedback type="invalid">Please choose a username.</Form.Control.Feedback>
           <Form.Group className="mb-3">
             <Form.Label>Name</Form.Label>
             <Controller
               name="name"
               control={control}
-              rules={{ required: true }}
               render={({ field }) => (
                 <>
                   <Form.Control type="text" {...field} isInvalid={errors.name !== undefined} />
@@ -144,14 +149,19 @@ const RecipeForm: React.FC<IProps> = ({ show, onClose }: IProps) => {
                 name="category.id"
                 control={control}
                 render={({ field }) => (
-                  <Form.Select {...field}>
-                    {categories.map((category: ICategory) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                    <option value="">Add new category ...</option>
-                  </Form.Select>
+                  <>
+                    <Form.Select {...field} isInvalid={errors.category?.id !== undefined}>
+                      {categories.map((category: ICategory) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                      <option value="">Add new category...</option>
+                    </Form.Select>
+                    <Form.Control.Feedback type="invalid">
+                      {errors.category?.id?.message}
+                    </Form.Control.Feedback>
+                  </>
                 )}
               />
             </Form.Group>
@@ -182,7 +192,18 @@ const RecipeForm: React.FC<IProps> = ({ show, onClose }: IProps) => {
             <Controller
               name="description"
               control={control}
-              render={({ field }) => <Form.Control type="text" {...field} />}
+              render={({ field }) => (
+                <>
+                  <Form.Control
+                    type="text"
+                    {...field}
+                    isInvalid={errors.description !== undefined}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.description?.message}
+                  </Form.Control.Feedback>
+                </>
+              )}
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -190,7 +211,19 @@ const RecipeForm: React.FC<IProps> = ({ show, onClose }: IProps) => {
             <Controller
               name="ingredients"
               control={control}
-              render={({ field }) => <Form.Control as="textarea" rows={3} {...field} />}
+              render={({ field }) => (
+                <>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    {...field}
+                    isInvalid={errors.ingredients !== undefined}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.ingredients?.message}
+                  </Form.Control.Feedback>
+                </>
+              )}
             />
           </Form.Group>
         </Modal.Body>
@@ -198,7 +231,7 @@ const RecipeForm: React.FC<IProps> = ({ show, onClose }: IProps) => {
           <Button variant="outline-secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="primary" type="submit">
+          <Button type="submit" variant="primary">
             Save
           </Button>
         </Modal.Footer>
