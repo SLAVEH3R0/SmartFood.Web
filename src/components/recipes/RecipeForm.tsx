@@ -4,11 +4,13 @@ import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import * as yup from 'yup';
 import { ICategory } from '../../models/ICategory';
+import { IRecipe } from '../../models/IRecipe';
 import api from '../../services/api';
 
 interface IProps {
   show: boolean;
   onClose: () => void;
+  onAdd: (recipe: IRecipe) => void;
 }
 
 interface IFormValues {
@@ -18,6 +20,7 @@ interface IFormValues {
   description: string;
   ingredients: string;
   category: ICategory;
+  photo: string;
 }
 
 const schema = yup.object({
@@ -35,7 +38,7 @@ const schema = yup.object({
   ingredients: yup.string().required('Ingredients is required'),
 });
 
-const RecipeForm: React.FC<IProps> = ({ show, onClose }: IProps) => {
+const RecipeForm: React.FC<IProps> = ({ show, onClose, onAdd }: IProps) => {
   const [categories, setCategories] = useState<Array<ICategory>>([]);
   const {
     control,
@@ -73,10 +76,23 @@ const RecipeForm: React.FC<IProps> = ({ show, onClose }: IProps) => {
       if (categoryName) {
         data.category.name = categoryName;
       }
+    } else {
+      delete data.category.id;
     }
 
-    console.log(data);
-    //TODO: add post logic here...
+    data.photo = 'https://picsum.photos/id/102/400/300';
+
+    api
+      .post('/recipes', data)
+      .then((response) => {
+        const data = {
+          ...response.data,
+          createdAt: new Date(response.data.createdAt),
+          updatedAt: new Date(response.data.updatedAt),
+        };
+        onAdd(data);
+      })
+      .catch((error) => console.error(error));
   };
 
   return (
